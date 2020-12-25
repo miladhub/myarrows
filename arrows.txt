@@ -1,0 +1,32 @@
+first :: Arrow a => a b c -> a (b, d) (c, d)
+
+second :: Arrow a => a b c -> a (d, b) (d, c)
+
+second f = arr swap         >>> first f         >>> arr swap
+
+           a (d, b) (b, d)  >>> a (b, d) (c, d) >>> a (c, d) (d, c)
+
+
+f :: a b c
+first f :: a (b, d) (c, d)
+swap (x,y) = (y,x)
+
+
+
+(***) :: Arrow a => a b c -> a d e -> a (b, d) (c, e)
+
+(***) f g = first f         >>> second g
+            a (b, x) (c, x) >>> a (y, d) (y, e)
+                         x=d, y=c
+            a (b, d) (c, d) >>> a (c, d) (c, e) = a (b, d) (c, e)
+
+(&&&) :: Arrow a => a b c -> a b d -> a b (c, d)
+
+(&&&) f g =
+
+(***) f g = a (b, b) (c, d)
+
+
+
+add :: Arrow a => a b Int -> a b Int -> a b Int
+add f g = f &&& g >>> arr (\(a, b) -> a + b)
